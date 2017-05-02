@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+       *{
+         padding: 0;
+         margin: 0;
+         border: 0;
+        }
+        #sumBox{
+            width: 310px;
+            height: 220px;
+            position: relative;
+            margin: 100px auto;
+            overflow: hidden;
+        }
+        #sumBox #bigBox{
+            width: 620px;
+            height: 100%;
+            position: absolute;
+        }
+        #sumBox #bigBox div{
+            position: absolute;
+            width: 320px;
+            height: 220px;
+        }
+        #sumBox span{
+            width: 30px;
+            height: 40px;
+            position: absolute;
+            top: 50%;
+            transform: translate(0,-50%);
+            font-size: 20px;
+            line-height: 40px;
+            text-align: center;
+            z-index: 5;
+            color: white;
+            background: black;
+            opacity: 0.8;
+        }
+        span:hover{
+            border: 1px solid #cccccc;
+        }
+        #sumBox span:nth-of-type(1){
+            left: 0;
+        }
+       #sumBox span:nth-of-type(2){
+           right: 0;
+       }
+        #sumBox #oUl{
+            left: 50%;
+            transform: translate(-50%,0);
+            width: 120px;
+            position: absolute;
+            bottom: 10px;
+        }
+        #sumBox #oUl li{
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            float: left;
+            background: green;
+            list-style: none;
+            margin-right: 5px;
+        }
+        #sumBox #oUl li.curr{
+            background: gray;
+        }
+    </style>
+</head>
+<body>
+    <div id="sumBox">
+        <div id="bigBox">
+            <div >
+                <img src="images/1.jpeg" alt=""/>
+            </div>
+            <div>
+                <img src="images/2.jpeg" alt=""/>
+            </div>
+            <div>
+                <img src="images/3.jpeg" alt=""/>
+            </div>
+            <div>
+                <img src="images/4.jpeg" alt=""/>
+            </div>
+            <div>
+                <img src="images/5.jpeg" alt=""/>
+            </div>
+            <div>
+                <img src="images/6.jpeg" alt=""/>
+            </div>
+        </div>
+
+        <span id="perv"><</span>
+        <span id="next">></span>
+
+        <ul id="oUl">
+            <li class="curr"></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+        
+    </div>
+
+</body>
+<script src="myTool.js"></script>
+<script>
+    var sumBox=getId('sumBox')
+    var bigBox=getId('bigBox')
+    var bigBoxDiv=bigBox.children;
+    var perv=getId('perv')
+    var next=getId('next')
+    var oUl=getId('oUl')
+    var aLi=oUl.children;
+
+    var picIndex=0;
+
+    var currIndex=0;
+
+    var sumBoxW=sumBox.offsetWidth;
+
+
+   for(var i=1;i<bigBoxDiv.length;i++){
+       bigBoxDiv[i].style.left=sumBoxW+'px'
+   }
+
+    perv.onclick=function (){
+        moveFrame(bigBoxDiv[picIndex],{left:-sumBoxW})
+        picIndex--;
+        currIndex--;
+        if(currIndex<0){
+            currIndex=aLi.length-1;
+        }
+        if(picIndex<0){
+            picIndex=bigBoxDiv.length-1;
+        }
+        bigBoxDiv[picIndex].style.left=sumBoxW+'px';
+        moveFrame( bigBoxDiv[picIndex],{left:0})
+        chang();
+    };
+
+    next.onclick=function (){
+        auto();
+    }
+
+    function chang(){
+         for(var i=0;i<aLi.length;i++){
+             aLi[i].className=''
+         }
+        aLi[currIndex].className='curr'
+    }
+
+    for(var i=0;i<aLi.length;i++){
+        (function (index){
+            aLi[index].onclick=function (){
+              if(index>picIndex){
+                  moveFrame(bigBoxDiv[picIndex],{left:sumBoxW})
+                  bigBoxDiv[index].style.left=-sumBoxW+'px';
+              }
+                if(index<picIndex){
+                  moveFrame(bigBoxDiv[picIndex],{left:-sumBoxW})
+                  bigBoxDiv[index].style.left=sumBoxW+'px';
+              }
+                currIndex=picIndex=index;
+                chang();
+                moveFrame(bigBoxDiv[index],{left:0});
+            }
+        })(i)
+    }
+    function auto(){
+        moveFrame(bigBoxDiv[picIndex],{left:sumBoxW})
+        picIndex++;
+        currIndex++;
+        if(currIndex>aLi.length-1){
+            currIndex=0;
+        }
+        if(picIndex>bigBoxDiv.length-1){
+            picIndex=0
+        }
+        bigBoxDiv[picIndex].style.left=-sumBoxW+'px';
+        moveFrame(bigBoxDiv[picIndex],{left:0})
+        chang()
+    }
+
+    var timer;
+    timer=setInterval(auto,1000)
+
+    sumBox.onmouseover=function (){
+      clearInterval(timer);
+    }
+    sumBox.onmouseout=function (){
+        timer=setInterval(auto,1000)
+    }
+</script>
+</html>
